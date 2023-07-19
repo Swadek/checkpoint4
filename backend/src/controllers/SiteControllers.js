@@ -1,7 +1,7 @@
 const models = require("../models");
 
 const browse = (req, res) => {
-  models.item
+  models.site
     .findAll()
     .then(([rows]) => {
       res.send(rows);
@@ -13,7 +13,7 @@ const browse = (req, res) => {
 };
 
 const read = (req, res) => {
-  models.item
+  models.site
     .find(req.params.id)
     .then(([rows]) => {
       if (rows[0] == null) {
@@ -28,20 +28,46 @@ const read = (req, res) => {
     });
 };
 
-const edit = (req, res) => {
-  const item = req.body;
-
-  // TODO validations (length, format...)
-
-  item.id = parseInt(req.params.id, 10);
-
-  models.item
-    .update(item)
+const updateSite = (req, res) => {
+  const { id } = req.params;
+  const keys = Object.keys(req.body);
+  const values = Object.values(req.body);
+  const valueQuery = keys.map((key) => `${key} = ?`).join(", ");
+  models.site
+    .update(values, valueQuery, id)
     .then(([result]) => {
-      if (result.affectedRows === 0) {
-        res.sendStatus(404);
-      } else {
+      if (result.affectedRows !== 0) {
         res.sendStatus(204);
+      } else {
+        res.status(404).send("Site not found...");
+      }
+    })
+    .catch(() => {
+      res.status(500).send("Error while updating site");
+    });
+};
+
+const AddSite = (req, res) => {
+  const { title, description, url, image } = req.body;
+
+  models.site
+    .insert({
+      title,
+      description,
+      url,
+      image,
+    })
+    .then(([result]) => {
+      if (result.affectedRows) {
+        res.status(201).json({
+          id: result.insertId,
+          title,
+          description,
+          url,
+          image,
+        });
+      } else {
+        res.sendStatus(400);
       }
     })
     .catch((err) => {
@@ -50,24 +76,8 @@ const edit = (req, res) => {
     });
 };
 
-const add = (req, res) => {
-  const item = req.body;
-
-  // TODO validations (length, format...)
-
-  models.item
-    .insert(item)
-    .then(([result]) => {
-      res.location(`/items/${result.insertId}`).sendStatus(201);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.sendStatus(500);
-    });
-};
-
 const destroy = (req, res) => {
-  models.item
+  models.site
     .delete(req.params.id)
     .then(([result]) => {
       if (result.affectedRows === 0) {
@@ -85,7 +95,7 @@ const destroy = (req, res) => {
 module.exports = {
   browse,
   read,
-  edit,
-  add,
+  updateSite,
+  AddSite,
   destroy,
 };

@@ -25,17 +25,17 @@ pool.getConnection().catch(() => {
   );
 });
 
-// declare and fill models: that's where you should register your own managers
-
 const models = {};
 
-const ItemManager = require("./ItemManager");
+const AdminManager = require("./AdminManager");
 
-models.item = new ItemManager();
-models.item.setDatabase(pool);
+models.admin = new AdminManager();
+models.admin.setDatabase(pool);
 
-// bonus: use a proxy to personalize error message,
-// when asking for a non existing model
+const SiteManager = require("./SiteManager");
+
+models.site = new SiteManager();
+models.site.setDatabase(pool);
 
 const handler = {
   get(obj, prop) {
