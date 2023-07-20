@@ -4,7 +4,7 @@ import "../styles/AdminAuthentication.scss";
 
 function AdminAuthentication() {
   return (
-    <div className="background background-light">
+    <div className="background">
       <div className="authentication-admin-container">
         <h1 className="title-connection-admin">
           <p>Connectez vous à</p>

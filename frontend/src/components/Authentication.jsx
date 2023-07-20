@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
-import "../styles/Authentication.scss";
 import { useNavigate } from "react-router-dom";
 import AuthFunctionContext from "../contexts/AuthFunctionContext";
 
